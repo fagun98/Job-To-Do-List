@@ -3,27 +3,29 @@ import React, { useState } from 'react'
 
 const JobList = () => {
     const [jobs, setJobs] = useState([]);
-
     const [Company, setCompany] = useState('');
     const [jobRole, setJobRole] = useState('');
-    
+    const [customDate, setCustomDate] = useState(new Date());
+
     const handleSubmit = (e) => {
         e.preventDefault();
-        const updatedJobs = [...jobs]
-        
-        const today = new Date();
-        const formattedDate = today.toISOString().split('T')[0]; 
-        
-        const newJob = {
-            'Date' : formattedDate,
-            'Company' : Company,
-            'Job' : jobRole,
+        if (!Company || !jobRole) {
+        alert('Please fill in all fields');
+        return;
         }
-
+        const updatedJobs = [...jobs];
+        const today = customDate || new Date();
+        const formattedDate = today.toISOString().split('T')[0];
+        const newJob = {
+        'Date': formattedDate,
+        'Company': Company,
+        'Job': jobRole,
+        };
         updatedJobs.push(newJob);
-        setJobs(updatedJobs);
+        setJobs(updatedJobs.sort((a, b) => (a.Date > b.Date ? 1 : -1)));
         setCompany('');
         setJobRole('');
+        setCustomDate(null);
     }
 
   return (
@@ -53,6 +55,17 @@ const JobList = () => {
                     placeholder="Job Role" 
                     value={jobRole}
                     onChange={(e) => setJobRole(e.target.value)}
+                />
+            </div>
+
+            <div className="mb-6">
+                <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Date</label>
+                <input
+                    type="date"
+                    id="date"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    value={customDate ? customDate.toISOString().split('T')[0] : ''}
+                    onChange={(e) => setCustomDate(new Date(e.target.value))}
                 />
             </div>
 
